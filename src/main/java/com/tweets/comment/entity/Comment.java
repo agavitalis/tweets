@@ -1,4 +1,4 @@
-package com.tweets.comment;
+package com.tweets.comment.entity;
 
 import com.tweets.common.entity.BaseEntity;
 import com.tweets.post.entity.Post;

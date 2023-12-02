@@ -1,7 +1,8 @@
 
 package com.tweets.post.entity;
 
-import com.tweets.comment.Comment;
+import com.tweets.comment.entity.Comment;
+import com.tweets.common.entity.BaseEntity;
 import com.tweets.user.entity.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -22,30 +23,13 @@ import java.util.List;
 @AllArgsConstructor
 @Entity
 @Table( name = "posts")
-public class Post {
+public class Post extends BaseEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
     @Column(name = "content")
     private String content;
 
     @Column(name = "numberOfLikes", columnDefinition = "number default 0")
     private Number numberOfLikes;
-
-    @Column(name = "isDeleted", columnDefinition = "boolean default false")
-    private Boolean isDeleted;
-
-    @Column(name = "deletedAt")
-    private LocalDateTime deletedAt;
-
-    @CreationTimestamp
-    @Column(name = "createdAt")
-    private LocalDateTime createdAt;
-
-    @UpdateTimestamp
-    @Column(name = "updatedAt")
-    private LocalDateTime updatedAt;
 
     //relationships
     @ManyToOne(fetch = FetchType.LAZY)
