@@ -3,7 +3,7 @@ package com.tweets.post;
 
 import com.tweets.comment.Comment;
 import com.tweets.common.entity.BaseEntity;
-import com.tweets.user.User;
+import com.tweets.user.entity.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
