@@ -1,7 +1,8 @@
-package com.tweets.user.entity;
+
+package com.tweets.post.entity;
 
 import com.tweets.comment.Comment;
-import com.tweets.post.entity.Post;
+import com.tweets.user.entity.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -20,20 +21,17 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table( name = "users")
-public class User {
+@Table( name = "posts")
+public class Post {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(name = "username")
-    private String username;
+    @Column(name = "content")
+    private String content;
 
-    @Column(name = "email")
-    private String email;
-
-    @Column(name = "profilePicture")
-    private String profilePicture;
+    @Column(name = "numberOfLikes", columnDefinition = "number default 0")
+    private Number numberOfLikes;
 
     @Column(name = "isDeleted", columnDefinition = "boolean default false")
     private Boolean isDeleted;
@@ -50,9 +48,10 @@ public class User {
     private LocalDateTime updatedAt;
 
     //relationships
-    @OneToMany(mappedBy = "user")
-    private List<Post> posts = new ArrayList<>();
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "users_id")
+    private User user;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "post")
     private List<Comment> comments = new ArrayList<>();
 }

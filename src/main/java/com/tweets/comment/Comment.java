@@ -1,7 +1,7 @@
 package com.tweets.comment;
 
 import com.tweets.common.entity.BaseEntity;
-import com.tweets.post.Post;
+import com.tweets.post.entity.Post;
 import com.tweets.user.entity.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
