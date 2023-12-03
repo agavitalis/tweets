@@ -1,6 +1,7 @@
 package com.tweets.post;
 
 import com.tweets.common.response.CustomResponse;
+import com.tweets.common.response.PaginatedResponse;
 import com.tweets.post.PostService;
 import com.tweets.post.dto.LikeDto;
 import com.tweets.post.dto.PostDto;
@@ -34,10 +35,12 @@ public class PostController {
     }
 
     @GetMapping
-    public ResponseEntity<CustomResponse> getAllPosts(){
-        List<PostDto> posts = postService.getAllPosts();
-        CustomResponse response = new CustomResponse(HttpStatus.OK.toString(), "Posts Successfully retrieved", posts);
-        return ResponseEntity.ok(response);
+    public ResponseEntity<PaginatedResponse> getAllPosts(
+            @RequestParam(value = "pageNo", defaultValue = "0", required = false) int pageNo,
+            @RequestParam(value = "pageSize", defaultValue = "10", required = false) int pageSize
+    ){
+        PaginatedResponse posts = postService.getAllPosts(pageNo, pageSize);
+        return ResponseEntity.ok(posts);
     }
 
     @PutMapping("{id}")

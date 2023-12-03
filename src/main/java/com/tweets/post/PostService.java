@@ -1,7 +1,7 @@
 package com.tweets.post;
 
-import com.tweets.common.exception.ResourceNotFoundException;
 import com.tweets.common.exception.TweetsAPIException;
+import com.tweets.common.response.PaginatedResponse;
 import com.tweets.post.dto.PostDto;
 import com.tweets.post.entity.Like;
 import com.tweets.post.entity.Post;
@@ -9,6 +9,9 @@ import com.tweets.post.mapper.PostMapper;
 import com.tweets.user.UserRepository;
 import com.tweets.user.entity.User;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -46,10 +49,24 @@ public class PostService implements IPostService {
 
 
     @Override
-    public List<PostDto> getAllPosts() {
-        List<Post> posts = postRepository.findAll();
-        return posts.stream().map(PostMapper::mapToPostDto)
+    public PaginatedResponse getAllPosts(int pageNo, int pageSize) {
+
+        Pageable pageable = PageRequest.of(pageNo, pageSize);
+        Page<Post> postList = postRepository.findAll(pageable);
+        List<Post> listOfPost = postList.getContent();
+        List<PostDto> listOfPostDto = listOfPost.stream().map(PostMapper::mapToPostDto)
                 .collect(Collectors.toList());
+
+        PaginatedResponse pagedResponse = new PaginatedResponse();
+        pagedResponse.setData(listOfPostDto);
+        pagedResponse.setMessage("Posts Successfully Retrieved");
+        pagedResponse.setStatus(HttpStatus.OK.toString());
+        pagedResponse.setPageNo(postList.getNumber());
+        pagedResponse.setPageSize(postList.getSize());
+        pagedResponse.setTotalElements(postList.getTotalElements());
+        pagedResponse.setTotalPages(postList.getTotalPages());
+        pagedResponse.setLast(postList.isLast());
+        return pagedResponse;
     }
 
     @Override

@@ -1,15 +1,18 @@
 package com.tweets.comment;
 
-import com.tweets.common.exception.ResourceNotFoundException;
 import com.tweets.comment.dto.CommentDto;
 import com.tweets.comment.entity.Comment;
 import com.tweets.comment.mapper.CommentMapper;
 import com.tweets.common.exception.TweetsAPIException;
+import com.tweets.common.response.PaginatedResponse;
 import com.tweets.post.PostRepository;
 import com.tweets.post.entity.Post;
 import com.tweets.user.UserRepository;
 import com.tweets.user.entity.User;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import java.util.List;
@@ -48,12 +51,25 @@ public class CommentService implements ICommentService {
         return CommentMapper.mapToCommentDto(comment);
     }
 
-
     @Override
-    public List<CommentDto> getAllComments() {
-        List<Comment> comments = commentRepository.findAll();
-        return comments.stream().map(CommentMapper::mapToCommentDto)
+    public PaginatedResponse getAllComments(int pageNo, int pageSize) {
+
+        Pageable pageable = PageRequest.of(pageNo, pageSize);
+        Page<Comment> commentList = commentRepository.findAll(pageable);
+        List<Comment> listOfComment = commentList.getContent();
+        List<CommentDto> listOfCommentDto = listOfComment.stream().map(CommentMapper::mapToCommentDto)
                 .collect(Collectors.toList());
+
+        PaginatedResponse pagedResponse = new PaginatedResponse();
+        pagedResponse.setData(listOfCommentDto);
+        pagedResponse.setMessage("Comments Successfully Retrieved");
+        pagedResponse.setStatus(HttpStatus.OK.toString());
+        pagedResponse.setPageNo(commentList.getNumber());
+        pagedResponse.setPageSize(commentList.getSize());
+        pagedResponse.setTotalElements(commentList.getTotalElements());
+        pagedResponse.setTotalPages(commentList.getTotalPages());
+        pagedResponse.setLast(commentList.isLast());
+        return pagedResponse;
     }
 
     @Override

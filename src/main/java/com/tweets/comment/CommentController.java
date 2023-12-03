@@ -2,6 +2,7 @@ package com.tweets.comment;
 
 import com.tweets.comment.dto.CommentDto;
 import com.tweets.common.response.CustomResponse;
+import com.tweets.common.response.PaginatedResponse;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,10 +33,12 @@ public class CommentController {
     }
 
     @GetMapping
-    public ResponseEntity<CustomResponse> getAllComments(){
-        List<CommentDto> comments = commentService.getAllComments();
-        CustomResponse response = new CustomResponse(HttpStatus.OK.toString(), "Comments Successfully retrieved", comments);
-        return ResponseEntity.ok(response);
+    public ResponseEntity<PaginatedResponse> getAllComments(
+            @RequestParam(value = "pageNo", defaultValue = "0", required = false) int pageNo,
+            @RequestParam(value = "pageSize", defaultValue = "10", required = false) int pageSize
+    ){
+        PaginatedResponse comments = commentService.getAllComments(pageNo, pageSize);
+        return ResponseEntity.ok(comments);
     }
 
     @PutMapping("{id}")

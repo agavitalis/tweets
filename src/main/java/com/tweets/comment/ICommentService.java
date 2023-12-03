@@ -1,6 +1,7 @@
 package com.tweets.comment;
 
 import com.tweets.comment.dto.CommentDto;
+import com.tweets.common.response.PaginatedResponse;
 
 import java.util.List;
 
@@ -10,7 +11,7 @@ public interface ICommentService {
 
     CommentDto getCommentById(Long commentId);
 
-    List<CommentDto> getAllComments();
+    PaginatedResponse getAllComments(int pageNo, int pageSize);
 
     CommentDto updateComment(Long commentId, CommentDto updatedComment);
 
