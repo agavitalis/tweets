@@ -1,4 +1,4 @@
-package com.tweets.auth.dto;
+package com.tweets.common.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,7 +9,9 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class JwtAuthResponse {
-    private String accessToken;
-    private String tokenType = "Bearer";
+public class CustomResponse<T> {
+    private String status;
+    private String message;
+    private T data;
+
 }

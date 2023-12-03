@@ -1,5 +1,6 @@
 package com.tweets.user;
 
+import com.tweets.common.response.CustomResponse;
 import com.tweets.user.dto.UserDto;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -15,36 +16,35 @@ import java.util.List;
 public class UserController {
     private UserService userService;
 
-    @PostMapping
-    public ResponseEntity<UserDto> createUser(@RequestBody UserDto userDto){
-        UserDto user = userService.createUser(userDto);
-        return new ResponseEntity<>(user, HttpStatus.CREATED);
-    }
-
     @GetMapping("{id}")
-    public ResponseEntity<UserDto> getUserById(@PathVariable("id") Long userId){
+    public ResponseEntity<CustomResponse> getUserById(@PathVariable("id") Long userId){
         UserDto userDto = userService.getUserById(userId);
-        return ResponseEntity.ok(userDto);
+        CustomResponse response = new CustomResponse(HttpStatus.OK.toString(), "User Successfully retrieved", userDto);
+
+        return ResponseEntity.ok(response);
     }
 
 
     @GetMapping
-    public ResponseEntity<List<UserDto>> getAllUsers(){
+    public ResponseEntity<CustomResponse> getAllUsers(){
         List<UserDto> users = userService.getAllUsers();
-        return ResponseEntity.ok(users);
+        CustomResponse response = new CustomResponse(HttpStatus.OK.toString(), "Users Successfully retrieved", users);
+        return ResponseEntity.ok(response);
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<UserDto> updateUser(@PathVariable("id") Long userId,
+    public ResponseEntity<CustomResponse> updateUser(@PathVariable("id") Long userId,
                                                           @RequestBody UserDto updatedUser){
         UserDto userDto = userService.updateUser(userId, updatedUser);
-        return ResponseEntity.ok(userDto);
+        CustomResponse response = new CustomResponse(HttpStatus.OK.toString(), "Users Successfully updated", userDto);
+        return ResponseEntity.ok(response);
     }
 
     @DeleteMapping("{id}")
-    public ResponseEntity<String> deleteUser(@PathVariable("id") Long userId){
+    public ResponseEntity<CustomResponse> deleteUser(@PathVariable("id") Long userId){
         userService.deleteUser(userId);
-        return ResponseEntity.ok("User deleted successfully!.");
+        CustomResponse response = new CustomResponse(HttpStatus.OK.toString(), "Users Successfully deleted", null);
+        return ResponseEntity.ok(response);
     }
 
 }

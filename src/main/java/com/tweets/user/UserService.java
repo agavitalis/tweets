@@ -1,11 +1,13 @@
 package com.tweets.user;
 
 import com.tweets.common.exception.ResourceNotFoundException;
+import com.tweets.common.exception.TweetsAPIException;
 import com.tweets.user.dto.UserDto;
 import com.tweets.user.entity.User;
 import com.tweets.user.mapper.UserMapper;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,21 +20,26 @@ public class UserService implements IUserService{
     private UserRepository userRepository;
     private ModelMapper modelMapper;
 
-    @Override
-    public UserDto createUser(UserDto userDto) {
-        //User user = UserMapper.mapToUser(userDto);
-        User user = modelMapper.map(userDto, User.class);
-        User savedUser = userRepository.save(user);
-        //return UserMapper.mapToUserDto(savedUser);
-        return modelMapper.map(savedUser, UserDto.class);
-    }
+//    @Override
+//    public UserDto createUser(UserDto userDto) {
+//        User user = modelMapper.map(userDto, User.class);
+//        User savedUser = userRepository.save(user);
+//        return modelMapper.map(savedUser, UserDto.class);
+//    }
 
     @Override
     public UserDto getUserById(Long userId) {
         User user = userRepository.findById(userId).orElseThrow(
-                () -> new ResourceNotFoundException("User with the given id: " + userId + " does not exist")
+                () ->  new TweetsAPIException(HttpStatus.NOT_FOUND, "User with the given id: " + userId + " does not exist")
         );
-        return UserMapper.mapToUserDto(user);
+        return modelMapper.map(user, UserDto.class);
+    }
+
+    public UserDto getUserByEmailORUsername(String email, String userName) {
+        User user = userRepository.findByUsernameOrEmail(email, userName).orElseThrow(
+                () ->  new TweetsAPIException(HttpStatus.NOT_FOUND, "User with the given credentials does not exist")
+        );
+        return modelMapper.map(user, UserDto.class);
     }
 
     @Override
@@ -45,7 +52,7 @@ public class UserService implements IUserService{
     @Override
     public UserDto updateUser(Long userId, UserDto updatedUser) {
         User user = userRepository.findById(userId).orElseThrow(
-                () -> new ResourceNotFoundException("User does not exists with a given id:"+ userId)
+                () -> new TweetsAPIException(HttpStatus.NOT_FOUND,"User with the given id: " + userId + " does not exist")
         );
 
         user.setEmail(updatedUser.getEmail());
@@ -60,7 +67,7 @@ public class UserService implements IUserService{
     @Override
     public void deleteUser(Long userId) {
         userRepository.findById(userId).orElseThrow(
-                () -> new ResourceNotFoundException("User is not exists with a given id: " + userId)
+                () -> new TweetsAPIException(HttpStatus.NOT_FOUND,"User with the given id: " + userId + " does not exist")
         );
 
         userRepository.deleteById(userId);
