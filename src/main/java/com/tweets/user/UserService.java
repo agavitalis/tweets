@@ -1,16 +1,18 @@
 package com.tweets.user;
 
-import com.tweets.common.exception.ResourceNotFoundException;
 import com.tweets.common.exception.TweetsAPIException;
 import com.tweets.user.dto.UserDto;
 import com.tweets.user.entity.User;
+import com.tweets.user.entity.UserFollows;
 import com.tweets.user.mapper.UserMapper;
+import org.springframework.transaction.annotation.Transactional;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -18,6 +20,7 @@ import java.util.stream.Collectors;
 public class UserService implements IUserService{
 
     private UserRepository userRepository;
+    private UserFollowsRepository userFollowsRepository;
     private ModelMapper modelMapper;
 
 //    @Override
@@ -71,5 +74,48 @@ public class UserService implements IUserService{
         );
 
         userRepository.deleteById(userId);
+    }
+    @Transactional
+    public void followUser(Long followerId, Long followingId) {
+        User follower = userRepository.findById(followerId).orElseThrow(
+                () -> new TweetsAPIException(HttpStatus.NOT_FOUND,"User with the given id: " + followerId + " does not exist")
+        );
+
+        User following = userRepository.findById(followingId).orElseThrow(
+                () -> new TweetsAPIException(HttpStatus.NOT_FOUND,"User with the given id: " + followingId + " does not exist")
+        );
+
+        if (!follower.getFollowing().contains(following)) {
+            follower.follow(following);
+        }
+    }
+
+    @Transactional
+    public void unFollowUser(Long followerId, Long followingId) {
+        User follower = userRepository.findById(followerId).orElseThrow(
+                () -> new TweetsAPIException(HttpStatus.NOT_FOUND,"User with the given id: " + followerId + " does not exist")
+        );
+
+        User following = userRepository.findById(followingId).orElseThrow(
+                () -> new TweetsAPIException(HttpStatus.NOT_FOUND,"User with the given id: " + followingId + " does not exist")
+        );
+
+        UserFollows userFollows = userFollowsRepository.findByFollowerAndFollowing(follower, following);
+
+        if (userFollows != null) {
+            // Remove the association
+            follower.unfollow(following);
+
+            // Delete the UserFollows entity
+            userFollowsRepository.deleteById(userFollows.getId());
+        }
+
+    }
+
+    public Set<UserFollows> getFollowers(Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(
+                () ->  new TweetsAPIException(HttpStatus.NOT_FOUND, "User with the given id: " + userId + " does not exist")
+        );
+        return user.getFollowers();
     }
 }

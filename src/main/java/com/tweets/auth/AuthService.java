@@ -57,6 +57,8 @@ public class AuthService implements IAuthService{
                 loginDto.getPassword()
         ));
 
+
+
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         String token = jwtTokenProvider.generateToken(authentication);
