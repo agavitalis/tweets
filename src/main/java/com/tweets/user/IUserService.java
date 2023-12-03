@@ -10,8 +10,6 @@ public interface IUserService {
 
     UserDto getUserById(Long userId);
 
-    UserDto getUserByEmail(String email);
-
     List<UserDto> getAllUsers();
 
     UserDto updateUser(Long userId, UserDto updatedUser);

@@ -1,18 +1,17 @@
 package com.tweets.user.entity;
 
 import com.tweets.comment.entity.Comment;
-import com.tweets.common.entity.BaseEntity;
+import com.tweets.common.entity.BaseEntityAudit;
 import com.tweets.post.entity.Post;
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
-import org.springframework.data.annotation.Id;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,7 +21,7 @@ import java.util.List;
 @AllArgsConstructor
 @Entity
 @Table( name = "users")
-public class User extends BaseEntity {
+public class User extends BaseEntityAudit {
     @Column(name = "username")
     private String username;
 
@@ -31,6 +30,9 @@ public class User extends BaseEntity {
 
     @Column(name = "profilePicture")
     private String profilePicture;
+
+    @Column(name = "password")
+    private String password;
 
     //relationships
     @OneToMany(mappedBy = "user")

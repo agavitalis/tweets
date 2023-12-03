@@ -1,38 +1,40 @@
 package com.tweets.common.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
-import lombok.AllArgsConstructor;
+import jakarta.persistence.MappedSuperclass;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
-import org.springframework.data.annotation.Id;
+import jakarta.persistence.*;
 
-import java.time.LocalDateTime;
+import java.io.Serializable;
+import java.util.Objects;
 
 @Getter
 @Setter
-@NoArgsConstructor
-@AllArgsConstructor
-public class BaseEntity {
+@MappedSuperclass
+public class BaseEntity  implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(name = "isDeleted", columnDefinition = "boolean default false")
-    private Boolean isDeleted;
 
-    @Column(name = "deletedAt")
-    private LocalDateTime deletedAt;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof BaseEntity)) return false;
+        BaseEntity that = (BaseEntity) o;
+        return id.equals(that.id);
+    }
 
-    @CreationTimestamp
-    @Column(name = "createdAt")
-    private LocalDateTime createdAt;
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
 
-    @UpdateTimestamp
-    @Column(name = "updatedAt")
-    private LocalDateTime updatedAt;
+    @Override
+    public String toString() {
+        return "BaseEntity {" +
+                "id = " + id +
+                "}";
+    }
 }

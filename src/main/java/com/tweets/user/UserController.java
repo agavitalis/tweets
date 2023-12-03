@@ -27,11 +27,6 @@ public class UserController {
         return ResponseEntity.ok(userDto);
     }
 
-    @GetMapping("getUserByEmail/{id}")
-    public ResponseEntity<UserDto> getUserByEmail(@PathVariable("email") String email){
-        UserDto userDto = userService.getUserByEmail(email);
-        return ResponseEntity.ok(userDto);
-    }
 
     @GetMapping
     public ResponseEntity<List<UserDto>> getAllUsers(){

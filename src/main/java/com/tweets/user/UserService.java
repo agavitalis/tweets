@@ -5,6 +5,7 @@ import com.tweets.user.dto.UserDto;
 import com.tweets.user.entity.User;
 import com.tweets.user.mapper.UserMapper;
 import lombok.AllArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,26 +16,21 @@ import java.util.stream.Collectors;
 public class UserService implements IUserService{
 
     private UserRepository userRepository;
+    private ModelMapper modelMapper;
 
     @Override
     public UserDto createUser(UserDto userDto) {
-        User user = UserMapper.mapToUser(userDto);
+        //User user = UserMapper.mapToUser(userDto);
+        User user = modelMapper.map(userDto, User.class);
         User savedUser = userRepository.save(user);
-        return UserMapper.mapToUserDto(savedUser);
+        //return UserMapper.mapToUserDto(savedUser);
+        return modelMapper.map(savedUser, UserDto.class);
     }
 
     @Override
     public UserDto getUserById(Long userId) {
         User user = userRepository.findById(userId).orElseThrow(
                 () -> new ResourceNotFoundException("User with the given id: " + userId + " does not exist")
-        );
-        return UserMapper.mapToUserDto(user);
-    }
-
-    @Override
-    public UserDto getUserByEmail(String email) {
-        User user = userRepository.findUserByEmail(email).orElseThrow(
-                () -> new ResourceNotFoundException("User with the given email: " + email + " does not exist")
         );
         return UserMapper.mapToUserDto(user);
     }

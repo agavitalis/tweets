@@ -1,6 +1,7 @@
 package com.tweets.comment.entity;
 
 import com.tweets.common.entity.BaseEntity;
+import com.tweets.common.entity.BaseEntityAudit;
 import com.tweets.post.entity.Post;
 import com.tweets.user.entity.User;
 import jakarta.persistence.*;
@@ -15,7 +16,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @Entity
 @Table( name = "comments")
-public class Comment extends BaseEntity {
+public class Comment extends BaseEntityAudit {
     @Column(name = "content")
     private String content;
 
@@ -25,5 +26,5 @@ public class Comment extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id")
-    private Post comment;
+    private Post post;
 }
