@@ -1,5 +1,6 @@
 package com.tweets.post;
 
+import com.tweets.common.response.CustomResponse;
 import com.tweets.post.PostService;
 import com.tweets.post.dto.PostDto;
 import lombok.AllArgsConstructor;
@@ -17,34 +18,40 @@ public class PostController {
     private PostService postService;
 
     @PostMapping
-    public ResponseEntity<PostDto> createPost(@RequestBody PostDto postDto){
+    public ResponseEntity<CustomResponse> createPost(@RequestBody PostDto postDto){
         PostDto post = postService.createPost(postDto);
-        return new ResponseEntity<>(post, HttpStatus.CREATED);
+
+        CustomResponse response = new CustomResponse(HttpStatus.CREATED.toString(), "Post Successfully created", post);
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<PostDto> getPostById(@PathVariable("id") Long postId){
+    public ResponseEntity<CustomResponse> getPostById(@PathVariable("id") Long postId){
         PostDto postDto = postService.getPostById(postId);
-        return ResponseEntity.ok(postDto);
+        CustomResponse response = new CustomResponse(HttpStatus.OK.toString(), "Post Successfully retrieved", postDto);
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping
-    public ResponseEntity<List<PostDto>> getAllPosts(){
+    public ResponseEntity<CustomResponse> getAllPosts(){
         List<PostDto> posts = postService.getAllPosts();
-        return ResponseEntity.ok(posts);
+        CustomResponse response = new CustomResponse(HttpStatus.OK.toString(), "Posts Successfully retrieved", posts);
+        return ResponseEntity.ok(response);
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<PostDto> updatePost(@PathVariable("id") Long postId,
+    public ResponseEntity<CustomResponse> updatePost(@PathVariable("id") Long postId,
                                                           @RequestBody PostDto updatedPost){
         PostDto postDto = postService.updatePost(postId, updatedPost);
-        return ResponseEntity.ok(postDto);
+        CustomResponse response = new CustomResponse(HttpStatus.OK.toString(), "Posts Successfully updated", postDto);
+        return ResponseEntity.ok(response);
     }
 
     @DeleteMapping("{id}")
-    public ResponseEntity<String> deletePost(@PathVariable("id") Long postId){
+    public ResponseEntity<CustomResponse> deletePost(@PathVariable("id") Long postId){
         postService.deletePost(postId);
-        return ResponseEntity.ok("Post deleted successfully!.");
+        CustomResponse response = new CustomResponse(HttpStatus.OK.toString(), "Posts Successfully deleted", null);
+        return ResponseEntity.ok(response);
     }
 
 }

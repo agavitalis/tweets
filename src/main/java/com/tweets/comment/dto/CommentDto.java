@@ -17,4 +17,5 @@ public class CommentDto {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private Long userId;
+    private Long postId;
 }

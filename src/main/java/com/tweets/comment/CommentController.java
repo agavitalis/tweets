@@ -1,6 +1,7 @@
 package com.tweets.comment;
 
 import com.tweets.comment.dto.CommentDto;
+import com.tweets.common.response.CustomResponse;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,34 +17,40 @@ public class CommentController {
     private CommentService commentService;
 
     @PostMapping
-    public ResponseEntity<CommentDto> createComment(@RequestBody CommentDto commentDto){
+    public ResponseEntity<CustomResponse> createComment(@RequestBody CommentDto commentDto){
         CommentDto comment = commentService.createComment(commentDto);
-        return new ResponseEntity<>(comment, HttpStatus.CREATED);
+
+        CustomResponse response = new CustomResponse(HttpStatus.CREATED.toString(), "Comment Successfully created", comment);
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<CommentDto> getCommentById(@PathVariable("id") Long commentId){
+    public ResponseEntity<CustomResponse> getCommentById(@PathVariable("id") Long commentId){
         CommentDto commentDto = commentService.getCommentById(commentId);
-        return ResponseEntity.ok(commentDto);
+        CustomResponse response = new CustomResponse(HttpStatus.OK.toString(), "Comment Successfully retrieved", commentDto);
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping
-    public ResponseEntity<List<CommentDto>> getAllComments(){
+    public ResponseEntity<CustomResponse> getAllComments(){
         List<CommentDto> comments = commentService.getAllComments();
-        return ResponseEntity.ok(comments);
+        CustomResponse response = new CustomResponse(HttpStatus.OK.toString(), "Comments Successfully retrieved", comments);
+        return ResponseEntity.ok(response);
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<CommentDto> updateComment(@PathVariable("id") Long commentId,
+    public ResponseEntity<CustomResponse> updateComment(@PathVariable("id") Long commentId,
                                                           @RequestBody CommentDto updatedComment){
         CommentDto commentDto = commentService.updateComment(commentId, updatedComment);
-        return ResponseEntity.ok(commentDto);
+        CustomResponse response = new CustomResponse(HttpStatus.OK.toString(), "Comment Successfully updated", commentDto);
+        return ResponseEntity.ok(response);
     }
 
     @DeleteMapping("{id}")
-    public ResponseEntity<String> deleteComment(@PathVariable("id") Long commentId){
+    public ResponseEntity<CustomResponse> deleteComment(@PathVariable("id") Long commentId){
         commentService.deleteComment(commentId);
-        return ResponseEntity.ok("Comment deleted successfully!.");
+        CustomResponse response = new CustomResponse(HttpStatus.OK.toString(), "Comment Successfully deleted", null);
+        return ResponseEntity.ok(response);
     }
 
 }

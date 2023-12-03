@@ -1,12 +1,14 @@
 package com.tweets.post;
 
 import com.tweets.common.exception.ResourceNotFoundException;
+import com.tweets.common.exception.TweetsAPIException;
 import com.tweets.post.dto.PostDto;
 import com.tweets.post.entity.Post;
 import com.tweets.post.mapper.PostMapper;
 import com.tweets.user.UserRepository;
 import com.tweets.user.entity.User;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -25,7 +27,7 @@ public class PostService implements IPostService {
 
         User user = userRepository.findById(postDto.getUserId())
                 .orElseThrow(() ->
-                        new ResourceNotFoundException("User with id: " + postDto.getUserId() + " does not exist"));
+                        new TweetsAPIException(HttpStatus.NOT_FOUND,"User with id: " + postDto.getUserId() + " does not exist"));
         post.setUser(user);
         Post savedPost = postRepository.save(post);
         return PostMapper.mapToPostDto(savedPost);
@@ -34,7 +36,7 @@ public class PostService implements IPostService {
     @Override
     public PostDto getPostById(Long postId) {
         Post post = postRepository.findById(postId).orElseThrow(
-                () -> new ResourceNotFoundException("Post with the given id: " + postId + " does not exist")
+                () -> new TweetsAPIException(HttpStatus.NOT_FOUND,"Post with the given id: " + postId + " does not exist")
         );
         return PostMapper.mapToPostDto(post);
     }
@@ -50,7 +52,7 @@ public class PostService implements IPostService {
     @Override
     public PostDto updatePost(Long postId, PostDto updatedPost) {
         Post post = postRepository.findById(postId).orElseThrow(
-                () -> new ResourceNotFoundException("Post does not exists with a given id:"+ postId)
+                () -> new TweetsAPIException(HttpStatus.NOT_FOUND,"Post does not exists with a given id:"+ postId)
         );
 
         post.setContent(updatedPost.getContent());
@@ -62,7 +64,7 @@ public class PostService implements IPostService {
     @Override
     public void deletePost(Long postId) {
         postRepository.findById(postId).orElseThrow(
-                () -> new ResourceNotFoundException("Post is not exists with a given id: " + postId)
+                () -> new TweetsAPIException(HttpStatus.NOT_FOUND,"Post is not exists with a given id: " + postId)
         );
 
         postRepository.deleteById(postId);

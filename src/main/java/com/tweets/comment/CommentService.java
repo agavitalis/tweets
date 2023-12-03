@@ -4,9 +4,13 @@ import com.tweets.common.exception.ResourceNotFoundException;
 import com.tweets.comment.dto.CommentDto;
 import com.tweets.comment.entity.Comment;
 import com.tweets.comment.mapper.CommentMapper;
+import com.tweets.common.exception.TweetsAPIException;
+import com.tweets.post.PostRepository;
+import com.tweets.post.entity.Post;
 import com.tweets.user.UserRepository;
 import com.tweets.user.entity.User;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -14,9 +18,9 @@ import java.util.stream.Collectors;
 @Service
 @AllArgsConstructor
 public class CommentService implements ICommentService {
-
     private CommentRepository commentRepository;
     private UserRepository userRepository;
+    private PostRepository postRepository;
 
     @Override
     public CommentDto createComment(CommentDto commentDto) {
@@ -24,8 +28,14 @@ public class CommentService implements ICommentService {
 
         User user = userRepository.findById(commentDto.getUserId())
                 .orElseThrow(() ->
-                        new ResourceNotFoundException("User with id: " + commentDto.getUserId() + " does not exist"));
+                        new TweetsAPIException(HttpStatus.NOT_FOUND,"User with id: " + commentDto.getUserId() + " does not exist"));
+
+        Post post = postRepository.findById(commentDto.getPostId())
+                .orElseThrow(() ->
+                        new TweetsAPIException(HttpStatus.NOT_FOUND, "Post with id: " + commentDto.getPostId() + " does not exist"));
+
         comment.setUser(user);
+        comment.setPost(post);
         Comment savedComment = commentRepository.save(comment);
         return CommentMapper.mapToCommentDto(savedComment);
     }
@@ -33,7 +43,7 @@ public class CommentService implements ICommentService {
     @Override
     public CommentDto getCommentById(Long commentId) {
         Comment comment = commentRepository.findById(commentId).orElseThrow(
-                () -> new ResourceNotFoundException("Comment with the given id: " + commentId + " does not exist")
+                () -> new TweetsAPIException(HttpStatus.NOT_FOUND,"Comment with the given id: " + commentId + " does not exist")
         );
         return CommentMapper.mapToCommentDto(comment);
     }
@@ -49,7 +59,7 @@ public class CommentService implements ICommentService {
     @Override
     public CommentDto updateComment(Long commentId, CommentDto updatedComment) {
         Comment comment = commentRepository.findById(commentId).orElseThrow(
-                () -> new ResourceNotFoundException("Comment does not exists with a given id:"+ commentId)
+                () -> new TweetsAPIException(HttpStatus.NOT_FOUND,"Comment with the given id: " + commentId + " does not exist")
         );
 
         comment.setContent(updatedComment.getContent());
@@ -61,7 +71,7 @@ public class CommentService implements ICommentService {
     @Override
     public void deleteComment(Long commentId) {
         commentRepository.findById(commentId).orElseThrow(
-                () -> new ResourceNotFoundException("Comment is not exists with a given id: " + commentId)
+                () -> new TweetsAPIException(HttpStatus.NOT_FOUND, "Comment with the given id: " + commentId + " does not exist")
         );
 
         commentRepository.deleteById(commentId);

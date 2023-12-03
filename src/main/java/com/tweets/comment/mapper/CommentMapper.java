@@ -10,7 +10,8 @@ public class CommentMapper {
                 comment.getContent(),
                 comment.getCreatedAt(),
                 comment.getUpdatedAt(),
-                comment.getUser().getId()
+                comment.getUser().getId(),
+                comment.getPost().getId()
         );
     }
 
