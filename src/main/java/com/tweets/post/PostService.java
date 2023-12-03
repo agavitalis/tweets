@@ -3,6 +3,7 @@ package com.tweets.post;
 import com.tweets.common.exception.ResourceNotFoundException;
 import com.tweets.common.exception.TweetsAPIException;
 import com.tweets.post.dto.PostDto;
+import com.tweets.post.entity.Like;
 import com.tweets.post.entity.Post;
 import com.tweets.post.mapper.PostMapper;
 import com.tweets.user.UserRepository;
@@ -10,6 +11,7 @@ import com.tweets.user.entity.User;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -20,6 +22,7 @@ public class PostService implements IPostService {
 
     private PostRepository postRepository;
     private UserRepository userRepository;
+    private LikeRepository likeRepository;
 
     @Override
     public PostDto createPost(PostDto postDto) {
@@ -68,5 +71,35 @@ public class PostService implements IPostService {
         );
 
         postRepository.deleteById(postId);
+    }
+
+    @Override
+    @Transactional
+    public void likePost(Long userId, Long postId) {
+        // Check if the user has already liked the post
+        if (!hasUserLikedPost(userId, postId)) {
+            // If not, proceed to like the post
+            User user = userRepository.findById(userId)
+                    .orElseThrow(() -> new TweetsAPIException(HttpStatus.NOT_FOUND,"User not found with id: " + userId));
+
+            Post post = postRepository.findById(postId)
+                    .orElseThrow(() -> new TweetsAPIException(HttpStatus.NOT_FOUND,"Post not found with id: " + postId));
+
+            Like like = new Like();
+            like.setUser(user);
+            like.setPost(post);
+
+            likeRepository.save(like);
+
+            post.setNumberOfLikes(post.getNumberOfLikes() == null ? 1 : post.getNumberOfLikes() + 1);
+            postRepository.save(post);
+        } else {
+            // User has already liked the post, handle accordingly (throw exception, return a message, etc.)
+            throw new TweetsAPIException(HttpStatus.CONFLICT, "User with id " + userId + " has already liked the post with id " + postId);
+        }
+    }
+
+    private boolean hasUserLikedPost(Long userId, Long postId) {
+        return likeRepository.existsByUserIdAndPostId(userId, postId);
     }
 }

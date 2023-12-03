@@ -3,6 +3,7 @@ package com.tweets.user.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.tweets.comment.entity.Comment;
 import com.tweets.common.entity.BaseEntityAudit;
+import com.tweets.post.entity.Like;
 import com.tweets.post.entity.Post;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -62,5 +63,8 @@ public class User extends BaseEntityAudit {
         following.remove(userFollows);
         user.getFollowers().remove(userFollows);
     }
+
+    @OneToMany(mappedBy = "user")
+    private List<Like> likes = new ArrayList<>();
 
 }

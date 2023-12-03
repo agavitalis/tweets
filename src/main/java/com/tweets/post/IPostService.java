@@ -15,4 +15,6 @@ public interface IPostService {
     PostDto updatePost(Long postId, PostDto updatedPost);
 
     void deletePost(Long postId);
+
+    void likePost(Long userId, Long postId);
 }

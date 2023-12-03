@@ -2,6 +2,7 @@ package com.tweets.post;
 
 import com.tweets.common.response.CustomResponse;
 import com.tweets.post.PostService;
+import com.tweets.post.dto.LikeDto;
 import com.tweets.post.dto.PostDto;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -51,6 +52,13 @@ public class PostController {
     public ResponseEntity<CustomResponse> deletePost(@PathVariable("id") Long postId){
         postService.deletePost(postId);
         CustomResponse response = new CustomResponse(HttpStatus.OK.toString(), "Posts Successfully deleted", null);
+        return ResponseEntity.ok(response);
+    }
+
+    @PatchMapping("/likePost")
+    public ResponseEntity<CustomResponse> updatePost(@RequestBody LikeDto likeDto){
+        postService.likePost(likeDto.getUserId(), likeDto.getPostId());
+        CustomResponse response = new CustomResponse(HttpStatus.OK.toString(), "Post Successfully liked", null);
         return ResponseEntity.ok(response);
     }
 
