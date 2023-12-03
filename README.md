@@ -17,6 +17,10 @@ This project was built using [Spring Boot](https://github.com/) framework starte
 - Application Endpoint: `http://localhost:8080`
 
 ## Installation
+You can run the app in 3 ways: 
+1. Without Docker
+2. Using Docker as an image
+3. Using Docker Compose (Recommended)
 
 ### Running the app (Without Docker)
 
@@ -30,8 +34,7 @@ After installing the dependencies and configuring `application.properties` file,
 ./mvnw spring-boot:run
 ```
 
-
-### Running the app (Using Docker)
+### Running the app (Using Docker as an image)
 
 Build the application docker image using the command:
 ```bash
@@ -55,6 +58,36 @@ Verify that your docker container is running using the command:
 ```bash
 docker container ps
 ```
+
+To delete a docker container use the command:
+```bash
+docker stop <container_id>
+```
+
+To delete a docker container use the command:
+```bash
+docker rm <container_id>
+```
+
+### Running the app (Using Docker Compose -- Recommended)
+
+Build the application docker image using the command:
+```bash
+docker compose build
+```
+Run the app using:
+```bash
+docker compose up 
+```
+You can also run in detached mood using:
+```bash
+docker compose up -d
+```
+To quit and delete use the command:
+```bash
+docker compose down
+```
+The access the app while running via docker use the URL: http://0.0.0.0:8070
 
 ### Architecture Overview
 

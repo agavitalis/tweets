@@ -1,5 +1,19 @@
 version: "3"
 services:
+  tweets-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: agavitalis/tweets
+    restart: on-failure
+    ports:
+      - "8070:8080"
+    networks:
+      - backend
+    volumes:
+      - .:/app/tweets-service
+    depends_on:
+      - "postgres"
 
   postgres:
     image: postgres:latest
@@ -11,6 +25,12 @@ services:
       - POSTGRES_DB=postgres
     volumes:
       - pg_data:/var/lib/postgresql/data
+    networks:
+      - backend
+
+networks:
+  backend:
+    driver: bridge
 
 volumes:
   pg_data:
