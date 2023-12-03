@@ -2,12 +2,15 @@ package com.tweets.user;
 
 import com.tweets.common.response.CustomResponse;
 import com.tweets.user.dto.UserDto;
+import com.tweets.user.entity.User;
+import com.tweets.user.entity.UserFollows;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Set;
 
 @CrossOrigin("*")
 @AllArgsConstructor
@@ -23,7 +26,6 @@ public class UserController {
 
         return ResponseEntity.ok(response);
     }
-
 
     @GetMapping
     public ResponseEntity<CustomResponse> getAllUsers(){
@@ -44,6 +46,29 @@ public class UserController {
     public ResponseEntity<CustomResponse> deleteUser(@PathVariable("id") Long userId){
         userService.deleteUser(userId);
         CustomResponse response = new CustomResponse(HttpStatus.OK.toString(), "Users Successfully deleted", null);
+        return ResponseEntity.ok(response);
+    }
+
+    @PatchMapping("/followUser/{followerId}/{followingId}")
+    public ResponseEntity<CustomResponse> followUser(@PathVariable("followerId") Long followerId,
+                           @PathVariable("followingId") Long followingId){
+         userService.followUser(followerId, followingId);
+        CustomResponse response = new CustomResponse(HttpStatus.OK.toString(), "You are now following this user", null);
+        return ResponseEntity.ok(response);
+    }
+
+    @PatchMapping("/unFollowUser/{followerId}/{followingId}")
+    public ResponseEntity<CustomResponse> unFollowUser(@PathVariable("followerId") Long followerId,
+                                                     @PathVariable("followingId") Long followingId){
+        userService.unFollowUser(followerId, followingId);
+        CustomResponse response = new CustomResponse(HttpStatus.OK.toString(), "You are now unfollowed this user", null);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/getFollowers/{id}")
+    public ResponseEntity<CustomResponse> getFollowers(@PathVariable("id") Long userId){
+        Set<UserFollows> followers = userService.getFollowers(userId);
+        CustomResponse response = new CustomResponse(HttpStatus.OK.toString(), "Users Successfully retrieved", followers);
         return ResponseEntity.ok(response);
     }
 
