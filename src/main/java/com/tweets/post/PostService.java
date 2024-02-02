@@ -49,11 +49,18 @@ public class PostService implements IPostService {
 
 
     @Override
-    public PaginatedResponse getAllPosts(int pageNo, int pageSize) {
-
+    public PaginatedResponse getAllPosts(int pageNo, int pageSize, String email) {
         Pageable pageable = PageRequest.of(pageNo, pageSize);
-        Page<Post> postList = postRepository.findAll(pageable);
-        List<Post> listOfPost = postList.getContent();
+        Page<Post> postList;
+        List<Post> listOfPost;
+        if(email != null){
+            postList = postRepository.findByUserEmail(email,pageable );
+            listOfPost = postList.getContent();
+        }else{
+            postList = postRepository.findAll(pageable);
+            listOfPost = postList.getContent();
+        }
+
         List<PostDto> listOfPostDto = listOfPost.stream().map(PostMapper::mapToPostDto)
                 .collect(Collectors.toList());
 

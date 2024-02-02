@@ -11,7 +11,7 @@ public interface IPostService {
 
     PostDto getPostById(Long postId);
 
-    PaginatedResponse getAllPosts(int pageNo, int pageSize);
+    PaginatedResponse getAllPosts(int pageNo, int pageSize, String email);
 
     PostDto updatePost(Long postId, PostDto updatedPost);
 
